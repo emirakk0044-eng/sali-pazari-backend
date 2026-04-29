@@ -1,26 +1,26 @@
 [
   {
     "content": "Phase 2: Get design guidelines from design_agent",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Install backend & frontend dependencies",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Build backend (FastAPI) - products, messages, settings, auth",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Build frontend (React) - public site + admin panel",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: All user stories covered in Development",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: End to End Testing using Testing Agent",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
