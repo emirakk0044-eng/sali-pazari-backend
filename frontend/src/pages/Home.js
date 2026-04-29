@@ -295,9 +295,9 @@ export default function Home() {
             {categories.map((cat, i) => {
               const IconComp = ICON_MAP[cat.icon] || Package;
               const colors = CATEGORY_COLORS[i % CATEGORY_COLORS.length];
-              const isActive = activeCategory === cat.id;
+              const isActive = activeCategory === cat.name;
               return (
-                <button key={cat.id} onClick={() => { setActiveCategory(cat.id); document.getElementById('urunler')?.scrollIntoView({ behavior: 'smooth' }); }}
+                <button key={cat.id} onClick={() => { setActiveCategory(cat.name); document.getElementById('urunler')?.scrollIntoView({ behavior: 'smooth' }); }}
                   data-testid="category-tab-item"
                   style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
@@ -336,11 +336,11 @@ export default function Home() {
                 cursor: 'pointer', transition: 'all 0.2s'
               }}>Tümü</button>
               {categories.map(cat => (
-                <button key={cat.id} onClick={() => setActiveCategory(cat.id)} style={{
+                <button key={cat.id} onClick={() => setActiveCategory(cat.name)} style={{
                   padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600, border: '1.5px solid', whiteSpace: 'nowrap',
-                  background: activeCategory === cat.id ? 'var(--brand)' : '#fff',
-                  color: activeCategory === cat.id ? '#fff' : '#64748b',
-                  borderColor: activeCategory === cat.id ? 'var(--brand)' : '#e2e8f0',
+                  background: activeCategory === cat.name ? 'var(--brand)' : '#fff',
+                  color: activeCategory === cat.name ? '#fff' : '#64748b',
+                  borderColor: activeCategory === cat.name ? 'var(--brand)' : '#e2e8f0',
                   cursor: 'pointer', transition: 'all 0.2s'
                 }}>{cat.name}</button>
               ))}
