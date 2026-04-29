@@ -155,7 +155,7 @@ export default function Home() {
             </div>
           </a>
           <nav style={{ display: 'flex', gap: 4, alignItems: 'center' }} className="desktop-nav">
-            {[['#kategoriler','Kategoriler','public-nav-categories-link'],['#urunler','Ürünler','public-nav-products-link'],['#harita','Konum','public-nav-map-link'],['#yorumlar','Yorumlar','public-nav-reviews-link'],['#iletisim','İletişim','public-nav-contact-link']].map(([href,label,tid]) => (
+            {[['#kategoriler','Kategoriler','public-nav-categories-link'],['#urunler','Ürünler','public-nav-products-link'],['#harita','Konum','public-nav-map-link'],['#iletisim','İletişim','public-nav-contact-link']].map(([href,label,tid]) => (
               <a key={href} href={href} data-testid={tid} style={{ padding: '6px 12px', borderRadius: 8, fontSize: 13.5, fontWeight: 500, color: '#475569', transition: 'color 0.2s, background 0.2s' }}
                 onMouseEnter={e => { e.target.style.color='var(--brand)'; e.target.style.background='var(--brand-light)'; }}
                 onMouseLeave={e => { e.target.style.color='#475569'; e.target.style.background='transparent'; }}>{label}</a>
@@ -179,7 +179,7 @@ export default function Home() {
         </div>
         {mobileMenuOpen && (
           <div style={{ background: '#fff', borderTop: '1px solid #e2e8f0', padding: '12px 20px 16px' }}>
-            {[['#kategoriler','Kategoriler'],['#urunler','Ürünler'],['#harita','Konum'],['#yorumlar','Yorumlar'],['#iletisim','İletişim']].map(([href,label]) => (
+            {[['#kategoriler','Kategoriler'],['#urunler','Ürünler'],['#harita','Konum'],['#iletisim','İletişim']].map(([href,label]) => (
               <a key={href} href={href} onClick={() => setMobileMenuOpen(false)}
                 style={{ display: 'block', padding: '10px 0', color: '#334155', fontWeight: 500, fontSize: 15, borderBottom: '1px solid #f1f5f9' }}>{label}</a>
             ))}
@@ -437,38 +437,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ======= REVIEWS ======= */}
-      <section id="yorumlar" data-testid="reviews-section" style={{ padding: '72px 20px', background: 'var(--surface)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, marginBottom: 10 }}>Müşteri Yorumları</h2>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '8px 18px', marginTop: 4 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-              <span style={{ fontWeight: 700, fontSize: 15, color: '#0f172a' }}>{s?.google_rating || 3.9}</span>
-              <StarRow rating={Math.round(s?.google_rating || 3.9)} size={13} />
-              <span style={{ fontSize: 13, color: '#64748b' }}>{s?.review_count || 26} yorum</span>
-            </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
-            {REVIEWS.map(r => (
-              <div key={r.id} data-testid="review-card" style={{ background: '#fff', borderRadius: 16, padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow='0 10px 28px rgba(0,0,0,0.09)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{r.initials}</div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>{r.name}</div>
-                    <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>{r.source}</div>
-                  </div>
-                </div>
-                <StarRow rating={r.rating} />
-                <p style={{ marginTop: 12, fontSize: 13.5, color: '#475569', lineHeight: 1.65 }}>{r.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ======= CONTACT ======= */}
       <section id="iletisim" style={{ padding: '72px 20px', background: '#fff' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -575,7 +543,7 @@ export default function Home() {
             </div>
             <div>
               <h4 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 14, fontWeight: 700, marginBottom: 16, color: '#fff' }}>Hızlı Bağlantılar</h4>
-              {[['#anasayfa','Ana Sayfa'],['#kategoriler','Kategoriler'],['#urunler','Ürünler'],['#harita','Konum & Saatler'],['#yorumlar','Yorumlar'],['#iletisim','İletişim']].map(([href,label]) => (
+              {[['#anasayfa','Ana Sayfa'],['#kategoriler','Kategoriler'],['#urunler','Ürünler'],['#harita','Konum & Saatler'],['#iletisim','İletişim']].map(([href,label]) => (
                 <a key={href} href={href} style={{ display: 'block', fontSize: 13, color: '#94a3b8', marginBottom: 8, transition: 'color 0.2s' }}
                   onMouseEnter={e => e.target.style.color='var(--brand)'} onMouseLeave={e => e.target.style.color='#94a3b8'}>{label}</a>
               ))}
