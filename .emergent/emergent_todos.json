@@ -1,26 +1,22 @@
 [
   {
-    "content": "Phase 2: Get design guidelines from design_agent",
-    "status": "completed"
+    "content": "Railway CLI kur ve token ile giriş yap",
+    "status": "in_progress"
   },
   {
-    "content": "Phase 2: Install backend & frontend dependencies",
-    "status": "completed"
+    "content": "Backend için Dockerfile ve railway.json hazırla",
+    "status": "pending"
   },
   {
-    "content": "Phase 2: Build backend (FastAPI) - products, messages, settings, auth",
-    "status": "completed"
+    "content": "Railway'e MongoDB servisi ekle ve backend deploy et",
+    "status": "pending"
   },
   {
-    "content": "Phase 2: Build frontend (React) - public site + admin panel",
-    "status": "completed"
+    "content": "Railway URL'sini al, frontend'i yeniden build et",
+    "status": "pending"
   },
   {
-    "content": "Phase 2: All user stories covered in Development",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: End to End Testing using Testing Agent",
-    "status": "completed"
+    "content": "Netlify'a yeni build yükle",
+    "status": "pending"
   }
 ]
