@@ -41,13 +41,8 @@ app = FastAPI(title="Salı Pazarı AVM API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=[
-        "https://shiny-toffee-2372ff.netlify.app",
-        "http://localhost:3000",
-        "https://doc-preview-17.preview.emergentagent.com",
-        "*"
-    ],
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
