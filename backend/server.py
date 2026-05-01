@@ -38,6 +38,20 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Salı Pazarı AVM API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=[
+        "https://shiny-toffee-2372ff.netlify.app",
+        "http://localhost:3000",
+        "https://doc-preview-17.preview.emergentagent.com",
+        "*"
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 api_router = APIRouter(prefix="/api")
 
 # ── Auth ─────────────────────────────────────────────────────────────────────
@@ -320,6 +334,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_db_client():
+    global client
+    mongo_url = os.environ.get('MONGO_URL')
+    client = AsyncIOMotorClient(mongo_url)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
