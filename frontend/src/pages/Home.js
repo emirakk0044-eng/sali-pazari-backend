@@ -123,7 +123,7 @@ export default function Home() {
     finally { setFormLoading(false); }
   };
 
-  const waHref = settings?.whatsapp_number ? `https://wa.me/${settings.whatsapp_number}` : '#';
+  const waHref = settings?.whatsapp_number ? `https://wa.me/${settings.whatsapp_number.replace(/\D/g, '')}` : 'https://wa.me/905362834481';
   const today = DAY_NAMES[new Date().getDay()];
   const now = new Date();
   const mins = now.getHours() * 60 + now.getMinutes();
@@ -426,7 +426,7 @@ export default function Home() {
                   );
                 })}
               </div>
-              <a href={s?.google_maps_url || '#'} target="_blank" rel="noopener noreferrer"
+              <a href={s?.google_maps_url || 'https://www.google.com/maps/search/?api=1&query=Karabaş+İstiklal+Cd.+No:164+41040+İzmit+Kocaeli+Turkey'} target="_blank" rel="noopener noreferrer"
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 20, padding: '12px', borderRadius: 12, background: 'var(--brand)', color: '#fff', fontWeight: 600, fontSize: 14, textDecoration: 'none', transition: 'background 0.2s' }}
                 onMouseEnter={e => e.currentTarget.style.background='var(--brand-dark)'}
                 onMouseLeave={e => e.currentTarget.style.background='var(--brand)'}>
@@ -502,9 +502,9 @@ export default function Home() {
               },{
                 icon: <Clock size={18} />, title: 'Çalışma Saatleri', val: 'Her gün 09:00 – 20:30', link: null, bg: '#fef3c7', color: '#d97706'
               },{
-                icon: <MessageCircle size={18} />, title: 'WhatsApp', val: s?.whatsapp_number ? `+${s.whatsapp_number}` : '+90 536 283 44 81', link: waHref, bg: '#d1fae5', color: '#059669'
+                icon: <MessageCircle size={18} />, title: 'WhatsApp', val: s?.whatsapp_number || '+90 536 283 44 81', link: waHref, bg: '#d1fae5', color: '#059669'
               },{
-                icon: <InstagramIcon size={18} />, title: 'Instagram', val: s?.instagram_handle || '@salipazarizmit', link: s?.instagram_url, bg: '#fce7f3', color: '#db2777'
+                icon: <InstagramIcon size={18} />, title: 'Instagram', val: s?.instagram_handle || '@salipazarizmit', link: s?.instagram_url || 'https://www.instagram.com/salipazarizmit', bg: '#fce7f3', color: '#db2777'
               }].map(({ icon, title, val, link, bg, color }, i) => (
                 <div key={i} style={{ background: '#fff', borderRadius: 16, padding: '18px 20px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: 14, boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
                   <div style={{ width: 42, height: 42, borderRadius: 12, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>{icon}</div>
@@ -533,7 +533,7 @@ export default function Home() {
               </div>
               <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.7, marginBottom: 16 }}>{s?.slogan?.split(',').slice(0,3).join(', ')}</p>
               <div style={{ display: 'flex', gap: 10 }}>
-                <a href={s?.instagram_url || '#'} target="_blank" rel="noopener noreferrer" style={{ width: 34, height: 34, borderRadius: 8, background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'background 0.2s' }}
+                <a href={s?.instagram_url || 'https://www.instagram.com/salipazarizmit'} target="_blank" rel="noopener noreferrer" style={{ width: 34, height: 34, borderRadius: 8, background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'background 0.2s' }}
                   onMouseEnter={e => { e.currentTarget.style.background='#db2777'; e.currentTarget.style.color='#fff'; }}
                   onMouseLeave={e => { e.currentTarget.style.background='#1e293b'; e.currentTarget.style.color='#94a3b8'; }}><InstagramIcon size={15} /></a>
                 <a href={waHref} target="_blank" rel="noopener noreferrer" style={{ width: 34, height: 34, borderRadius: 8, background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'background 0.2s' }}
