@@ -321,8 +321,18 @@ app.include_router(api_router)
 @app.on_event("startup")
 async def startup_db_client():
     global client
-    mongo_url = os.environ.get('MONGO_URL')
-    client = AsyncIOMotorClient(mongo_url)
+    try:
+        mongo_url = os.environ.get('MONGO_URL')
+        if not mongo_url:
+            logger.error("MONGO_URL not found in environment variables")
+            return
+        client = AsyncIOMotorClient(mongo_url)
+        # Test connection
+        await client.admin.command('ping')
+        logger.info("MongoDB connected successfully")
+    except Exception as e:
+        logger.error(f"MongoDB connection failed: {e}")
+        client = None
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
