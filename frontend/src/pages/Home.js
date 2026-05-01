@@ -72,6 +72,7 @@ export default function Home() {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', subject: '', message: '' });
   const [formLoading, setFormLoading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [zoomImage, setZoomImage] = useState(null);
 
   useEffect(() => {
     fetchSettings();
@@ -365,7 +366,7 @@ export default function Home() {
                 }}
                   onMouseEnter={e => { e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow='0 12px 32px rgba(0,0,0,0.10)'; }}
                   onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; }}>
-                  <div style={{ aspectRatio: '4/3', overflow: 'hidden', background: '#f8fafc', position: 'relative' }}>
+                  <div onClick={() => setZoomImage({ url: imgUrl(product.image_url), name: product.name })} style={{ aspectRatio: '4/3', overflow: 'hidden', background: '#f8fafc', position: 'relative', cursor: 'zoom-in' }}>
                     <img data-testid="product-card-image" src={imgUrl(product.image_url)} alt={product.name}
                       style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }}
                       onMouseEnter={e => e.target.style.transform='scale(1.05)'}
@@ -564,6 +565,19 @@ export default function Home() {
         </div>
       </footer>
 
+      {/* ======= IMAGE ZOOM MODAL ======= */}
+      {zoomImage && (
+        <div onClick={() => setZoomImage(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, cursor: 'zoom-out', animation: 'fadeIn 0.2s' }}>
+          <button onClick={() => setZoomImage(null)} style={{ position: 'absolute', top: 20, right: 20, width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.3)'}
+            onMouseLeave={e => e.currentTarget.style.background='rgba(255,255,255,0.2)'}>×</button>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh', position: 'relative' }}>
+            <img src={zoomImage.url} alt={zoomImage.name} style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: 12, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }} />
+            <div style={{ position: 'absolute', bottom: -40, left: 0, right: 0, textAlign: 'center', color: '#fff', fontSize: 14, fontWeight: 500 }}>{zoomImage.name}</div>
+          </div>
+        </div>
+      )}
+
       {/* ======= WHATSAPP FAB ======= */}
       <a href={waHref} target="_blank" rel="noopener noreferrer" data-testid="whatsapp-fab"
         style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 100, width: 56, height: 56, borderRadius: '50%', background: '#25d366', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(37,211,102,0.4)', transition: 'transform 0.2s, box-shadow 0.2s' }}
@@ -573,6 +587,10 @@ export default function Home() {
       </a>
 
       <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .wa-text { display: none; }
