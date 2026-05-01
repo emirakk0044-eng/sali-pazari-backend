@@ -322,18 +322,6 @@ async def get_stats(admin=Depends(get_admin)):
 # ── Register ─────────────────────────────────────────────────────────────────
 app.include_router(api_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=[
-        "https://shiny-toffee-2372ff.netlify.app",
-        "http://localhost:3000",
-        "https://doc-preview-17.preview.emergentagent.com",
-        "*"
-    ],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 @app.on_event("startup")
 async def startup_db_client():
