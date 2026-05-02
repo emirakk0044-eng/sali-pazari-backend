@@ -110,13 +110,16 @@ async def startup():
     settings = await db.settings.find_one({})
     if not settings:
         init = DEFAULT_SETTINGS.copy()
-        init["admin_password_hash"] = pwd_context.hash(ADMIN_PASSWORD_DEFAULT)
+        # Truncate password to 72 bytes for bcrypt
+        pwd_truncated = ADMIN_PASSWORD_DEFAULT[:72]
+        init["admin_password_hash"] = pwd_context.hash(pwd_truncated)
         await db.settings.insert_one(init)
         logger.info("Settings initialized")
     else:
         if not settings.get("admin_password_hash"):
+            pwd_truncated = ADMIN_PASSWORD_DEFAULT[:72]
             await db.settings.update_one(
-                {}, {"$set": {"admin_password_hash": pwd_context.hash(ADMIN_PASSWORD_DEFAULT)}}
+                {}, {"$set": {"admin_password_hash": pwd_context.hash(pwd_truncated)}}
             )
     if await db.categories.count_documents({}) == 0:
         await db.categories.insert_many(DEFAULT_CATEGORIES)
