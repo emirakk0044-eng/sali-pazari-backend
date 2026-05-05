@@ -94,9 +94,14 @@ input, textarea, select {
 .fade-in-up {
   animation: fadeInUp 0.5s ease forwards;
 }
+div[class*="powered"],
+div[class*="badge"],
+a[class*="badge"],
+div[class*="branding"],
+a[class*="branding"],
 [class*="emergent"],
-a[href*="emergent"],
-[class*="made-with"],
-[class*="watermark"] {
+a[href*="emergent"] {
   display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
