@@ -19,9 +19,9 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # ── MongoDB ──────────────────────────────────────────────────────────────────
-mongo_url = os.environ.get('MONGO_URL', '')
-client = AsyncIOMotorClient(mongo_url) if mongo_url else None
-db = client[os.environ.get('DB_NAME', 'salipazari')] if client else None
+mongo_url = os.environ['MONGO_URL']
+client = AsyncIOMotorClient(mongo_url)
+db = client[os.environ['DB_NAME']]
 
 # ── Config ───────────────────────────────────────────────────────────────────
 UPLOAD_DIR = ROOT_DIR / "uploads"
@@ -30,7 +30,7 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 JWT_SECRET = os.environ.get('JWT_SECRET', 'salipazari_jwt_secret')
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_HOURS = 24 * 7
-ADMIN_PASSWORD_DEFAULT = os.environ.get('ADMIN_PASSWORD', 'emir4144')
+ADMIN_PASSWORD_DEFAULT = os.environ.get('ADMIN_PASSWORD', 'SaliPazari2024!')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
@@ -107,36 +107,15 @@ def serialize(doc: dict) -> dict:
 # ── Startup ───────────────────────────────────────────────────────────────────
 @app.on_event("startup")
 async def startup():
-    global client
-    mongo_url = os.environ.get('MONGO_URL', '')
-    if mongo_url:
-        client = AsyncIOMotorClient(mongo_url)
-        await client.admin.command('ping')
-        logger.info("MongoDB connected successfully")
     settings = await db.settings.find_one({})
     if not settings:
         init = DEFAULT_SETTINGS.copy()
-<<<<<<< HEAD
-        init["admin_password_hash"] = pwd_context.hash(ADMIN_PASSWORD_DEFAULT[:72])
-=======
         # Truncate password to 72 bytes for bcrypt
         pwd_truncated = ADMIN_PASSWORD_DEFAULT[:72]
         init["admin_password_hash"] = pwd_context.hash(pwd_truncated)
->>>>>>> c829786 (Fix bcrypt limit)
         await db.settings.insert_one(init)
         logger.info("Settings initialized")
     else:
-        if not settings.get("admin_password_hash"):
-            pwd_truncated = ADMIN_PASSWORD_DEFAULT[:72]
-            await db.settings.update_one(
-<<<<<<< HEAD
-                {}, {"$set": {"admin_password_hash": pwd_context.hash(ADMIN_PASSWORD_DEFAULT[:72])}}
-=======
-                {}, {"$set": {"admin_password_hash": pwd_context.hash(pwd_truncated)}}
->>>>>>> c829786 (Fix bcrypt limit)
-            )
-    if await db.categories.count_documents({}) == 0:
-        await db.categories.insert_many(DEFAULT_CATEGORIES)
         logger.info("Categories initialized")
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -144,12 +123,7 @@ async def startup():
 async def root():
     return {"message": "Salı Pazarı AVM API v1"}
 
-# -- Admin Auth
-@api_router.post("/admin/login")
-async def admin_login(data: dict):
-    password = data.get("password", "")
-    settings = await db.settings.find_one({})
-    if not settings or not pwd_context.verify(password[:72], settings.get("admin_password_hash", "")):
+    if not settings or not pwd_context.verify(password, settings.get("admin_password_hash", "")):
         raise HTTPException(status_code=401, detail="Geçersiz şifre")
     token = create_jwt({"role": "admin", "sub": "admin"})
     return {"access_token": token, "token_type": "bearer"}
@@ -170,7 +144,7 @@ async def update_settings(data: dict, admin=Depends(get_admin)):
     ]
     update = {k: data[k] for k in allowed if k in data}
     if "admin_password" in data and data["admin_password"]:
-        update["admin_password_hash"] = pwd_context.hash(data["admin_password"][:72])
+        update["admin_password_hash"] = pwd_context.hash(data["admin_password"])
     if update:
         await db.settings.update_one({}, {"$set": update}, upsert=True)
     settings = await db.settings.find_one({}, {"_id": 0, "admin_password_hash": 0})
@@ -330,6 +304,26 @@ async def get_stats(admin=Depends(get_admin)):
         "recent_products": [serialize(p) for p in recent_products],
         "recent_messages": [serialize(m) for m in recent_messages],
     }
+
+# ── Register ─────────────────────────────────────────────────────────────────
+app.include_router(api_router)
+
+
+@app.on_event("startup")
+async def startup_db_client():
+    global client
+    try:
+        mongo_url = os.environ.get('MONGO_URL')
+        if not mongo_url:
+            logger.error("MONGO_URL not found in environment variables")
+            return
+        client = AsyncIOMotorClient(mongo_url)
+        # Test connection
+        await client.admin.command('ping')
+        logger.info("MongoDB connected successfully")
+    except Exception as e:
+        logger.error(f"MongoDB connection failed: {e}")
+        client = None
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
