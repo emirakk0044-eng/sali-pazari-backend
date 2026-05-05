@@ -123,11 +123,17 @@ async def startup():
 async def root():
     return {"message": "Salı Pazarı AVM API v1"}
 
-    if not settings or not pwd_context.verify(password, settings.get("admin_password_hash", "")):
+class LoginRequest(BaseModel):
+    password: str
+
+@api_router.post("/admin/login")
+async def admin_login(data: LoginRequest):
+    settings = await db.settings.find_one({})
+    if not settings or not pwd_context.verify(data.password, settings.get("admin_password_hash", "")):
         raise HTTPException(status_code=401, detail="Geçersiz şifre")
     token = create_jwt({"role": "admin", "sub": "admin"})
     return {"access_token": token, "token_type": "bearer"}
-
+    
 # -- Settings (public)
 @api_router.get("/settings")
 async def get_settings():
