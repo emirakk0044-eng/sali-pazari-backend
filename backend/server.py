@@ -185,10 +185,15 @@ async def create_product(
     price: str = Form(...),
     category: str = Form(...),
     image: Optional[UploadFile] = File(None),
+    image_url: Optional[str] = Form(None),
     admin=Depends(get_admin),
 ):
-    image_url = None
-    if image and image.filename:
+    final_image_url = None
+    
+    # Öncelik: Dış URL varsa onu kullan, yoksa dosya yükleme
+    if image_url and image_url.strip():
+        final_image_url = image_url.strip()
+    elif image and image.filename:
         ext = Path(image.filename).suffix.lower()
         if ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
             raise HTTPException(400, "Geçersiz dosya türü. JPG, PNG, WEBP veya GIF yükleyin.")
@@ -198,13 +203,14 @@ async def create_product(
         filename = f"{uuid.uuid4()}{ext}"
         async with aiofiles.open(UPLOAD_DIR / filename, 'wb') as f:
             await f.write(content)
-        image_url = f"/api/uploads/{filename}"
+        final_image_url = f"/api/uploads/{filename}"
+    
     doc = {
         "id": str(uuid.uuid4()),
         "name": name,
         "price": price,
         "category": category,
-        "image_url": image_url,
+        "image_url": final_image_url,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -219,13 +225,24 @@ async def update_product(
     price: str = Form(...),
     category: str = Form(...),
     image: Optional[UploadFile] = File(None),
+    image_url: Optional[str] = Form(None),
     admin=Depends(get_admin),
 ):
     existing = await db.products.find_one({"id": pid})
     if not existing:
         raise HTTPException(404, "Ürün bulunamadı")
-    image_url = existing.get("image_url")
-    if image and image.filename:
+    
+    final_image_url = existing.get("image_url")
+    
+    # Öncelik: Dış URL varsa onu kullan, yoksa dosya yükleme
+    if image_url and image_url.strip():
+        final_image_url = image_url.strip()
+        # Eski local dosyayı sil (eğer varsa)
+        if existing.get("image_url") and existing["image_url"].startswith("/api/uploads/"):
+            old_file = UPLOAD_DIR / existing["image_url"].split("/")[-1]
+            if old_file.exists():
+                old_file.unlink()
+    elif image and image.filename:
         ext = Path(image.filename).suffix.lower()
         if ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
             raise HTTPException(400, "Geçersiz dosya türü")
@@ -235,15 +252,19 @@ async def update_product(
         filename = f"{uuid.uuid4()}{ext}"
         async with aiofiles.open(UPLOAD_DIR / filename, 'wb') as f:
             await f.write(content)
-        if existing.get("image_url"):
+        if existing.get("image_url") and existing["image_url"].startswith("/api/uploads/"):
             old_file = UPLOAD_DIR / existing["image_url"].split("/")[-1]
             if old_file.exists():
                 old_file.unlink()
-        image_url = f"/api/uploads/{filename}"
+        final_image_url = f"/api/uploads/{filename}"
+    
     update = {
         "name": name, "price": price, "category": category,
-        "image_url": image_url, "updated_at": datetime.now(timezone.utc).isoformat()
+        "image_url": final_image_url, "updated_at": datetime.now(timezone.utc).isoformat()
     }
+    await db.products.update_one({"id": pid}, {"$set": update})
+    updated = await db.products.find_one({"id": pid})
+    return serialize(updated)
     await db.products.update_one({"id": pid}, {"$set": update})
     doc = await db.products.find_one({"id": pid}, {"_id": 0})
     return serialize(doc)
