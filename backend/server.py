@@ -10,6 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import uuid
+import base64
 import logging
 from jose import jwt, JWTError
 from passlib.context import CryptContext
@@ -193,17 +194,16 @@ async def create_product(
     # Öncelik: Dış URL varsa onu kullan, yoksa dosya yükleme
     if image_url and image_url.strip():
         final_image_url = image_url.strip()
-    elif image and image.filename:
+elif image and image.filename:
         ext = Path(image.filename).suffix.lower()
-        if ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
+        mime_map = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".gif": "image/gif"}
+        if ext not in mime_map:
             raise HTTPException(400, "Geçersiz dosya türü. JPG, PNG, WEBP veya GIF yükleyin.")
         content = await image.read()
-        if len(content) > 10 * 1024 * 1024:
-            raise HTTPException(400, "Dosya çok büyük (maks 10MB)")
-        filename = f"{uuid.uuid4()}{ext}"
-        async with aiofiles.open(UPLOAD_DIR / filename, 'wb') as f:
-            await f.write(content)
-        final_image_url = f"/api/uploads/{filename}"
+        if len(content) > 4 * 1024 * 1024:
+            raise HTTPException(400, "Dosya çok büyük (maks 4MB)")
+        b64 = base64.b64encode(content).decode()
+        final_image_url = f"data:{mime_map[ext]};base64,{b64}"
     
     doc = {
         "id": str(uuid.uuid4()),
@@ -242,22 +242,17 @@ async def update_product(
             old_file = UPLOAD_DIR / existing["image_url"].split("/")[-1]
             if old_file.exists():
                 old_file.unlink()
-    elif image and image.filename:
+   elif image and image.filename:
         ext = Path(image.filename).suffix.lower()
-        if ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
+        mime_map = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".gif": "image/gif"}
+        if ext not in mime_map:
             raise HTTPException(400, "Geçersiz dosya türü")
         content = await image.read()
-        if len(content) > 10 * 1024 * 1024:
-            raise HTTPException(400, "Dosya çok büyük (maks 10MB)")
-        filename = f"{uuid.uuid4()}{ext}"
-        async with aiofiles.open(UPLOAD_DIR / filename, 'wb') as f:
-            await f.write(content)
-        if existing.get("image_url") and existing["image_url"].startswith("/api/uploads/"):
-            old_file = UPLOAD_DIR / existing["image_url"].split("/")[-1]
-            if old_file.exists():
-                old_file.unlink()
-        final_image_url = f"/api/uploads/{filename}"
-    
+        if len(content) > 4 * 1024 * 1024:
+            raise HTTPException(400, "Dosya çok büyük (maks 4MB)")
+        b64 = base64.b64encode(content).decode()
+        final_image_url = f"data:{mime_map[ext]};base64,{b64}"
+
     update = {
         "name": name, "price": price, "category": category,
         "image_url": final_image_url, "updated_at": datetime.now(timezone.utc).isoformat()
