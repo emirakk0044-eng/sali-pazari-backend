@@ -129,8 +129,11 @@ export default function Home() {
   const now = new Date();
   const mins = now.getHours() * 60 + now.getMinutes();
   const open = mins >= 9 * 60 && mins < 20 * 60 + 30;
-  const imgUrl = (url) => url ? `${BACKEND}${url}` : 'https://images.pexels.com/photos/1084101/pexels-photo-1084101.jpeg?auto=compress&cs=tinysrgb&w=400';
-
+const imgUrl = (url) => {
+  if (!url) return 'https://images.pexels.com/photos/1084101/pexels-photo-1084101.jpeg?auto=compress&cs=tinysrgb&w=400';
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  return `${BACKEND}${url}`;
+};
   const s = settings;
 
   return (
