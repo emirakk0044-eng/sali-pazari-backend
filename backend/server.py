@@ -194,7 +194,7 @@ async def create_product(
     # Öncelik: Dış URL varsa onu kullan, yoksa dosya yükleme
     if image_url and image_url.strip():
         final_image_url = image_url.strip()
-elif image and image.filename:
+    elif image and image.filename:
         ext = Path(image.filename).suffix.lower()
         mime_map = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".gif": "image/gif"}
         if ext not in mime_map:
