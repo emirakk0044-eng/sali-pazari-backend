@@ -158,8 +158,7 @@ export default function AdminProducts() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div style={{ width: 44, height: 44, borderRadius: 8, background: '#f1f5f9', overflow: 'hidden', flexShrink: 0 }}>
                           {p.image_url ? (
-                            <img src={`${BACKEND}${p.image_url}`} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
-                          ) : <Package size={18} color="#94a3b8" style={{ margin: '13px auto', display: 'block' }} />}
+                            <img src={p.image_url && (p.image_url.startsWith('http') || p.image_url.startsWith('data:')) ? p.image_url : `${BACKEND}${p.image_url}`} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />                          ) : <Package size={18} color="#94a3b8" style={{ margin: '13px auto', display: 'block' }} />}
                         </div>
                         <span style={{ fontSize: 13, fontWeight: 600, color: '#1e293b' }}>{p.name}</span>
                       </div>
