@@ -93,8 +93,7 @@ export default function AdminDashboard() {
               {stats.recent_products.map(p => (
                 <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid #f8fafc' }}>
                   <div style={{ width: 40, height: 40, borderRadius: 8, background: '#f1f5f9', overflow: 'hidden', flexShrink: 0 }}>
-                    {p.image_url ? <img src={`${BACKEND}${p.image_url}`} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} /> : <Package size={18} color="#94a3b8" style={{ margin: '11px auto', display: 'block' }} />}
-                  </div>
+                    <img src={p.image_url && (p.image_url.startsWith('http') || p.image_url.startsWith('data:')) ? p.image_url : `${BACKEND}${p.image_url}`} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />                  </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
                     <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>{p.category}</div>
