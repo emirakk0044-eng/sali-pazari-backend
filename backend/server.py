@@ -242,7 +242,7 @@ async def update_product(
             old_file = UPLOAD_DIR / existing["image_url"].split("/")[-1]
             if old_file.exists():
                 old_file.unlink()
-       elif image and image.filename:
+    elif image and image.filename:
         ext = Path(image.filename).suffix.lower()
         mime_map = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".gif": "image/gif"}
         if ext not in mime_map:
@@ -252,7 +252,7 @@ async def update_product(
             raise HTTPException(400, "Dosya çok büyük (maks 4MB)")
         b64 = base64.b64encode(content).decode()
         final_image_url = f"data:{mime_map[ext]};base64,{b64}"
-
+        
     update = {
         "name": name, "price": price, "category": category,
         "image_url": final_image_url, "updated_at": datetime.now(timezone.utc).isoformat()
