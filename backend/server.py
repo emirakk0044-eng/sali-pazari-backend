@@ -242,7 +242,7 @@ async def update_product(
             old_file = UPLOAD_DIR / existing["image_url"].split("/")[-1]
             if old_file.exists():
                 old_file.unlink()
-   elif image and image.filename:
+       elif image and image.filename:
         ext = Path(image.filename).suffix.lower()
         mime_map = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".gif": "image/gif"}
         if ext not in mime_map:
